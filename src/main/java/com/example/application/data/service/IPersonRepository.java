@@ -1,12 +1,12 @@
 package com.example.application.data.service;
 
-import com.example.application.data.entity.SamplePerson;
+import com.example.application.data.entity.Player;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface SamplePersonRepository
+public interface IPersonRepository
         extends
-            JpaRepository<SamplePerson, Long>,
-            JpaSpecificationExecutor<SamplePerson> {
+            JpaRepository<Player, Long>,
+            JpaSpecificationExecutor<Player> {
 
 }

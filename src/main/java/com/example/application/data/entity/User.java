@@ -2,6 +2,7 @@ package com.example.application.data.entity;
 
 import com.example.application.data.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.checkerframework.common.aliasing.qual.Unique;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -16,6 +17,7 @@ import javax.persistence.Table;
 @Table(name = "application_user")
 public class User extends AbstractEntity {
 
+    @Unique
     private String username;
     private String name;
     @JsonIgnore
@@ -58,4 +60,7 @@ public class User extends AbstractEntity {
         this.profilePicture = profilePicture;
     }
 
+    public String getImageUrl() {
+        return "";
+    }
 }

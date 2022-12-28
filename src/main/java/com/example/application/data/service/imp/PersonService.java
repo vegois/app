@@ -1,26 +1,28 @@
-package com.example.application.data.service;
+package com.example.application.data.service.imp;
 
-import com.example.application.data.entity.SamplePerson;
+import com.example.application.data.entity.Player;
 import java.util.Optional;
+
+import com.example.application.data.service.IPersonRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SamplePersonService {
+public class PersonService {
 
-    private final SamplePersonRepository repository;
+    private final IPersonRepository repository;
 
-    public SamplePersonService(SamplePersonRepository repository) {
+    public PersonService(IPersonRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<SamplePerson> get(Long id) {
+    public Optional<Player> get(Long id) {
         return repository.findById(id);
     }
 
-    public SamplePerson update(SamplePerson entity) {
+    public Player update(Player entity) {
         return repository.save(entity);
     }
 
@@ -28,16 +30,17 @@ public class SamplePersonService {
         repository.deleteById(id);
     }
 
-    public Page<SamplePerson> list(Pageable pageable) {
+    public Page<Player> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public Page<SamplePerson> list(Pageable pageable, Specification<SamplePerson> filter) {
+    public Page<Player> list(Pageable pageable, Specification<Player> filter) {
         return repository.findAll(filter, pageable);
     }
 
     public int count() {
         return (int) repository.count();
     }
+
 
 }

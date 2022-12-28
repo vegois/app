@@ -5,10 +5,12 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Email;
 
 @Entity
-public class SamplePerson extends AbstractEntity {
+public class Player extends AbstractEntity {
 
     private String firstName;
     private String lastName;
+
+    private String userName;
     @Email
     private String email;
     private String phone;
@@ -16,6 +18,8 @@ public class SamplePerson extends AbstractEntity {
     private String occupation;
     private String role;
     private boolean important;
+    private String postalCode;
+    private String city;
 
     public String getFirstName() {
         return firstName;
@@ -66,4 +70,27 @@ public class SamplePerson extends AbstractEntity {
         this.important = important;
     }
 
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }

@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Version;
+import java.util.Date;
 
 @MappedSuperclass
 public abstract class AbstractEntity {
@@ -19,6 +20,8 @@ public abstract class AbstractEntity {
     @Version
     private int version;
 
+    private Date creationDate = new Date();
+
     public Long getId() {
         return id;
     }
@@ -29,6 +32,14 @@ public abstract class AbstractEntity {
 
     public int getVersion() {
         return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 
     @Override

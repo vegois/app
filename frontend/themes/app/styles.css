@@ -20,8 +20,8 @@
       --lumo-shade-80pct: hsla(214, 51%, 36%, 0.8);
       --lumo-shade-90pct: hsla(214, 51%, 36%, 0.9);
       --lumo-primary-color: hsl(214, 12%, 62%);
-      --lumo-primary-color-50pct: hsla(214, 12%, 62%, 0.5);
-      --lumo-primary-color-10pct: hsla(214, 12%, 62%, 0.1);
+      --lumo-primary-color-50pct: hsla(216, 11%, 91%, 0.5);
+      --lumo-primary-color-10pct: hsl(0, 0%, 100%);
       --lumo-base-color: #9ca6b4;
       --lumo-primary-text-color: hsl(214, 25%, 3%);
       --lumo-body-text-color: hsla(214, 58%, 19%, 0.94);

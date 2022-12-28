@@ -3,7 +3,7 @@ package com.example.application.data.entity;
 import javax.persistence.Entity;
 
 @Entity
-public class SampleAddress extends AbstractEntity {
+public class Address extends AbstractEntity {
 
     private String street;
     private String postalCode;

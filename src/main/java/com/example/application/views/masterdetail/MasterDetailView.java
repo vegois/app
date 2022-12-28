@@ -1,7 +1,11 @@
 package com.example.application.views.masterdetail;
 
-import com.example.application.data.entity.SamplePerson;
-import com.example.application.data.service.SamplePersonService;
+import com.example.application.data.entity.Foto;
+import com.example.application.data.entity.Player;
+import com.example.application.data.entity.User;
+import com.example.application.data.service.imp.ImageService;
+import com.example.application.data.service.imp.PersonService;
+import com.example.application.data.service.imp.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -13,11 +17,13 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -42,7 +48,7 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
     private final String SAMPLEPERSON_ID = "samplePersonID";
     private final String SAMPLEPERSON_EDIT_ROUTE_TEMPLATE = "master-detail/%s/edit";
 
-    private final Grid<SamplePerson> grid = new Grid<>(SamplePerson.class, false);
+    private final Grid<Player> grid = new Grid<>(Player.class, false);
 
     private TextField firstName;
     private TextField lastName;
@@ -53,17 +59,33 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
     private TextField role;
     private Checkbox important;
 
+
+    private TextField postalCode = new TextField("Postal code");
+    private TextField city = new TextField("City");
+
     private final Button cancel = new Button("Cancel");
     private final Button save = new Button("Save");
 
-    private final BeanValidationBinder<SamplePerson> binder;
+    private final BeanValidationBinder<Player> binder;
 
-    private SamplePerson samplePerson;
+    private Player player;
 
-    private final SamplePersonService samplePersonService;
+    private final PersonService personService;
 
-    public MasterDetailView(SamplePersonService samplePersonService) {
-        this.samplePersonService = samplePersonService;
+    private VerticalLayout imageContainer;
+    private VerticalLayout imageContainer1;
+    private final ImageService imageService;
+    private final UserService userService;
+
+    private Div editorDiv;
+    private User user;
+    private Foto foto;
+
+
+    public MasterDetailView(PersonService personService, ImageService imageService, UserService userService) {
+        this.personService = personService;
+        this.imageService = imageService;
+        this.userService = userService;
         addClassNames("master-detail-view");
 
         // Create UI
@@ -82,7 +104,9 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         grid.addColumn("dateOfBirth").setAutoWidth(true);
         grid.addColumn("occupation").setAutoWidth(true);
         grid.addColumn("role").setAutoWidth(true);
-        LitRenderer<SamplePerson> importantRenderer = LitRenderer.<SamplePerson>of(
+        grid.addColumn("postalCode").setAutoWidth(true);
+        grid.addColumn("city").setAutoWidth(true);
+        LitRenderer<Player> importantRenderer = LitRenderer.<Player>of(
                 "<vaadin-icon icon='vaadin:${item.icon}' style='width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: ${item.color};'></vaadin-icon>")
                 .withProperty("icon", important -> important.isImportant() ? "check" : "minus").withProperty("color",
                         important -> important.isImportant()
@@ -91,7 +115,7 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
 
         grid.addColumn(importantRenderer).setHeader("Important").setAutoWidth(true);
 
-        grid.setItems(query -> samplePersonService.list(
+        grid.setItems(query -> personService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -107,7 +131,7 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(SamplePerson.class);
+        binder = new BeanValidationBinder<>(Player.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
 
@@ -120,11 +144,11 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.samplePerson == null) {
-                    this.samplePerson = new SamplePerson();
+                if (this.player == null) {
+                    this.player = new Player();
                 }
-                binder.writeBean(this.samplePerson);
-                samplePersonService.update(this.samplePerson);
+                binder.writeBean(this.player);
+                personService.update(this.player);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -144,9 +168,10 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> samplePersonId = event.getRouteParameters().get(SAMPLEPERSON_ID).map(Long::parseLong);
         if (samplePersonId.isPresent()) {
-            Optional<SamplePerson> samplePersonFromBackend = samplePersonService.get(samplePersonId.get());
+            Optional<Player> samplePersonFromBackend = personService.get(samplePersonId.get());
             if (samplePersonFromBackend.isPresent()) {
                 populateForm(samplePersonFromBackend.get());
+                showImage();
             } else {
                 Notification.show(
                         String.format("The requested samplePerson was not found, ID = %s", samplePersonId.get()), 3000,
@@ -163,7 +188,7 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         Div editorLayoutDiv = new Div();
         editorLayoutDiv.setClassName("editor-layout");
 
-        Div editorDiv = new Div();
+        this.editorDiv = new Div();
         editorDiv.setClassName("editor");
         editorLayoutDiv.add(editorDiv);
 
@@ -176,12 +201,36 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         occupation = new TextField("Occupation");
         role = new TextField("Role");
         important = new Checkbox("Important");
-        formLayout.add(firstName, lastName, email, phone, dateOfBirth, occupation, role, important);
-
+        postalCode = new TextField("PostalCode");
+        city = new TextField("City");
+        formLayout.add(firstName, lastName, email, phone, dateOfBirth, occupation, role, important, postalCode, city);
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
 
         splitLayout.addToSecondary(editorLayoutDiv);
+    }
+
+    public void showImage() {
+        if (this.player != null ) {
+            Image image = imageService.generateImage(player.getId());
+            if (image != null) {
+                image.setHeight("100%");
+                if (imageContainer != null) {
+                    editorDiv.remove(imageContainer);
+                }
+                initImageContainer();
+                imageContainer.removeAll();
+                imageContainer.add(image);
+                editorDiv.add(imageContainer);
+            }
+        }
+    }
+
+    private void initImageContainer(){
+        imageContainer = new VerticalLayout();
+        imageContainer.setWidth("200px");
+        imageContainer.setHeight("200px");
+        imageContainer.getStyle().set("overflow-x", "auto");
     }
 
     private void createButtonLayout(Div editorLayoutDiv) {
@@ -209,9 +258,9 @@ public class MasterDetailView extends Div implements BeforeEnterObserver {
         populateForm(null);
     }
 
-    private void populateForm(SamplePerson value) {
-        this.samplePerson = value;
-        binder.readBean(this.samplePerson);
+    private void populateForm(Player value) {
+        this.player = value;
+        binder.readBean(this.player);
 
     }
 }

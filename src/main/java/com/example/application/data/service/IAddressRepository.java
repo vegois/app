@@ -1,12 +1,12 @@
 package com.example.application.data.service;
 
-import com.example.application.data.entity.SampleAddress;
+import com.example.application.data.entity.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface SampleAddressRepository
+public interface IAddressRepository
         extends
-            JpaRepository<SampleAddress, Long>,
-            JpaSpecificationExecutor<SampleAddress> {
+            JpaRepository<Address, Long>,
+            JpaSpecificationExecutor<Address> {
 
 }

@@ -6,14 +6,14 @@ import com.example.application.data.entity.User;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.about.AboutView;
 import com.example.application.views.addressform.AddressFormView;
-import com.example.application.views.cardlist.CardListView;
+import com.example.application.views.questionlist.QuestionListView;
 import com.example.application.views.checkoutform.CheckoutFormView;
 import com.example.application.views.creditcardform.CreditCardFormView;
 import com.example.application.views.empty.EmptyView;
 import com.example.application.views.gridwithfilters.GridwithFiltersView;
 import com.example.application.views.imagelist.ImageListView;
 import com.example.application.views.masterdetail.MasterDetailView;
-import com.example.application.views.neighbor.NeighborView;
+import com.example.application.views.card.CardView;
 import com.example.application.views.personform.PersonFormView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -79,8 +79,8 @@ public class MainLayout extends AppLayout {
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
 
-        if (accessChecker.hasAccess(NeighborView.class)) {
-            nav.addItem(new AppNavItem("Neighbor", NeighborView.class, "la la-comments"));
+        if (accessChecker.hasAccess(CardView.class)) {
+            nav.addItem(new AppNavItem("Neighbor", CardView.class, "la la-comments"));
 
         }
         if (accessChecker.hasAccess(AboutView.class)) {
@@ -95,8 +95,8 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("Address Form", AddressFormView.class, "la la-map-marker"));
 
         }
-        if (accessChecker.hasAccess(CardListView.class)) {
-            nav.addItem(new AppNavItem("Card List", CardListView.class, "la la-list"));
+        if (accessChecker.hasAccess(QuestionListView.class)) {
+            nav.addItem(new AppNavItem("Card List", QuestionListView.class, "la la-list"));
 
         }
         if (accessChecker.hasAccess(MasterDetailView.class)) {
